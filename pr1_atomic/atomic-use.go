@@ -18,7 +18,7 @@ func atomicUse() {
 			// due to an error). This is crucial for proper synchronization using WaitGroup. Without defer, if the goroutine exits early or encounters a panic, wg.Done() might not 
 			//be called, leading to the main function waiting indefinitely.
 		time.Sleep(time.Millisecond * 10)
-		fmt.Println("count atomicUs()e in go routine", atomic.LoadInt64(&count))
+		fmt.Println("count atomicUse() in go routine", atomic.LoadInt64(&count))
 	}()
 
 	wg.Add(50)
