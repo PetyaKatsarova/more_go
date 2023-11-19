@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+)
 
 // func main() {
 // 	// cards := newDeck()
@@ -59,7 +64,6 @@ import "fmt"
 // 	contact ContactInfo
 // }
 
-
 // func main() {
 // 	mysl := []string{"hi", "schatje"}
 // 	updateSl(mysl)
@@ -92,10 +96,27 @@ import "fmt"
 
 // -------------------- 	INTERFACES ---------------------------------------
 
-func main() {
+type logWriter struct{}
 
+func main() {
+	resp, err := http.Get("http://google.com")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	// fmt.Println(resp)
+	// bs := make([]byte, 99999) // 99999 els inside the byte slice
+	// resp.Body.Read(bs)
+	// fmt.Println(string(bs))
+	// ------------ does the same s above --------------------
+	// io.Copy(os.Stdout, resp.Body) // copy into stdout the resp.body
+
+	lw := logWriter{}
+	io.Copy(lw, resp.Body) // lw is dst, and resp.body is the src
 }
 
-type bot interface {
-	getGreeting() string
+func (logWriter) Write(bs []byte) (int, error) {
+	fmt.Println(string(bs))
+	fmt.Println("bytes len: ", len(bs))
+	return len(bs), nil
 }
