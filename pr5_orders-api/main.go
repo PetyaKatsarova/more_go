@@ -2,13 +2,17 @@ package main
 
 import (
 	// "context"
-	"fmt"
+	"app/pr5_orders-api/application"
 	"context"
+	"fmt"
 	"github.com/PetyaKatsarova/more_go/pr5_orders-api/application"
 )
 
 func main() {
-	
+	fmt.Println("hello world :)")
+	app := application.New()
+	err := app.Start(context.TODO())
+	if err != nil {	fmt.Println("failed to start app:", err) }
 }
 
 // go mod tidy       
