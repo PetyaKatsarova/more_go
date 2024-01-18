@@ -4,12 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
+	// "strings"
 	"sync"
 
-	"./cli"
-	// "github.com/HotPotatoC/go-translate/cli"
+	"github.com/PetyaKatsarova/more_go/udemy-pr3-translate/cli"
 )
+
+// go run .\main.go -s en -st hello -t fr
+//  go run .\main.go -s en -st "hello world" -t bg
 
 var wg sync.WaitGroup
 
@@ -18,13 +20,12 @@ var targetLang string
 var sourceText string
 
 func init() {
-	flag.StringVar(&sourceLang, "s", "en", "Source language[en]")
-	flag.StringVar(&sourceLang, "t", "fr", "Target language[fr]")
-	flag.StringVar(&sourceLang, "st", "en", "Text to translate")
+	flag.StringVar(&sourceLang, "s", "en", "Source language[en]") // flag is used for parsing command-line arguments provided when running the program
+	flag.StringVar(&targetLang, "t", "fr", "Target language[fr]")
+	flag.StringVar(&sourceText, "st", "en", "Text to translate")
 }
 
 func main() {
-	fmt.Println("ehllo world")
 	flag.Parse()
 	if flag.NFlag() == 0 {
 		fmt.Println("Options: ")
@@ -43,7 +44,9 @@ func main() {
 
 	go cli.RequestTranslate(reqBody, strChan, &wg) // publish in the channel
 
-	processedStr := strings.ReplaceAll(<-strChan, "+", " ") // replace all occurences of + with " " in the receivd from chan
+	// processedStr := strings.ReplaceAll(<-strChan, "+", " ") // replace all occurences of + with " " in the receivd from chan
+	// fmt.Println("processedStr: ", processedStr)
+	fmt.Println(<-strChan)
 	close(strChan)
 	wg.Wait()
 }

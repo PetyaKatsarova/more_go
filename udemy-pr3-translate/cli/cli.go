@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -19,18 +20,17 @@ const translateUrl = "https://translate.googleapis.com/translate_a/single"
 func RequestTranslate(body *RequestBody, strChan chan string, wg *sync.WaitGroup) {
 	client := &http.Client{} // all explained at the bottom
 	req, err := http.NewRequest("GET", translateUrl, nil)
+	fmt.Println("req: ", req)
+	if err != nil {	log.Fatalf("1.There was a problem: %s", err)}
+
 	query := req.URL.Query()
 	query.Add("client", "gtx")
 	query.Add("sl", body.SourceLang)
 	query.Add("tl", body.TargetLang)
-	query.Add("dt", "t")
+	query.Add("dt", "t") // what dt stands for
 	query.Add("q", body.SourceText)
 
 	req.URL.RawQuery = query.Encode()
-
-	if err != nil {
-		log.Fatalf("1.There was a problem: %s", err)
-	}
 
 	res, err := client.Do(req) // make a req
 	if err != nil {
@@ -46,6 +46,7 @@ func RequestTranslate(body *RequestBody, strChan chan string, wg *sync.WaitGroup
 	}
 
 	parsedJson, err := gabs.ParseJSONBuffer(res.Body)
+	fmt.Println("parsedJson: ", parsedJson)
 	if err != nil {
 		log.Fatalf("3.There was a problem: %s", err)
 	}
@@ -56,6 +57,7 @@ func RequestTranslate(body *RequestBody, strChan chan string, wg *sync.WaitGroup
 	}
 
 	nestTwo, err := nestOne.ArrayElement(0)
+	fmt.Println("nest two: ", nestTwo)
 	if err != nil {
 		log.Fatalf("5.There was a problem: %s", err)
 	}

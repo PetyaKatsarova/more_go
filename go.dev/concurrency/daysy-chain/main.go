@@ -58,7 +58,7 @@ func main() {
 
 func Google(query string) (results []Result) {
 	c := make(chan Result)
-	go func() { c <- First(query, Web1, Web2) }() // fanning pattern: get the data on the same chan and this is parallel!!
+	// go func() { c <- First(query, Web1, Web2) }() // fanning pattern: get the data on the same chan and this is parallel!!
 	go func() { c <- Image(query) }()
 	go func() { c <- Video(query) }()
 
