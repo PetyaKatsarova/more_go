@@ -15,7 +15,8 @@ rules across operating systems.
 import (
 	"fmt"
 	"log"
-	"time"
+	"sync"
+	// "time"
 )
 
 // *********** multiple sender test *************************888
@@ -29,8 +30,11 @@ import (
 func main() {
 	c := make(chan string, 5)
 	log.Printf("channel c has %d/%d items\n", len(c), cap(c))
-
+	wg := *&sync.WaitGroup{}
+	wg.Add(3)
+	
 	go func() {
+		defer wg.Done()
 		for s := range c {
 			log.Printf("receiver 1 read c(%d/%d) value \"%s\" \n", len(c), cap(c), s)
 		}
@@ -38,19 +42,31 @@ func main() {
 	}()
 
 	go func() {
+		defer wg.Done()
 		for s := range c {
 			log.Printf("receiver 2 read c(%d/%d) value \"%s\" \n", len(c), cap(c), s)
 		}
 		fmt.Println("receiver 2 goroutine end (channel closed)")
+	}()
+	go func() {
+		defer wg.Done()
+		for s := range c {
+			log.Printf("receiver 3 read c(%d/%d) value \"%s\" \n", len(c), cap(c), s)
+		}
+		fmt.Println("receiver 3 goroutine end (channel closed)")
 	}()
 
 	// values are randomly dispatch to the receiver
 	c <- "data 1"
 	c <- "data 2"
 	c <- "data 3"
+	c <- "data 4"
+	c <- "data 5"
+	c <- "data 6"
+	c <- "data 77"
 	close(c)
 
-	time.Sleep(100 * time.Millisecond)
-
+	// time.Sleep(100 * time.Millisecond)
+	wg.Wait()
 	fmt.Println("finished")
 }
